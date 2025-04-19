@@ -51,14 +51,18 @@ function addRowToTable(parcel, index) {
   newRow.insertCell(0).textContent = parcel.name;
   newRow.insertCell(1).textContent = parcel.id;
   newRow.insertCell(2).textContent = parcel.status;
+
   const actionCell = newRow.insertCell(3);
+  actionCell.innerHTML = `
+    ${parcel.status === 'Taken' ? '' : `<button onclick="markTaken(${index}, this)">Mark as Taken</button>`}
+    <button onclick="deleteParcel(${index})">Delete</button>
+  `;
 
   if (parcel.status === 'Taken') {
     newRow.classList.add('taken');
-  } else {
-    actionCell.innerHTML = `<button onclick="markTaken(${index}, this)">Mark as Taken</button>`;
   }
 }
+
 
 function markTaken(index, btn) {
   parcels[index].status = 'Taken';

@@ -90,3 +90,26 @@ function downloadCSV() {
     document.body.removeChild(link);
   }
   
+function deleteParcel(index) {
+  if (!confirm("Are you sure you want to delete this parcel?")) return;
+
+  const removed = parcels.splice(index, 1)[0];
+  saveToStorage();
+  reloadTable();
+
+  // 🔄 Optional: Delete from backend
+  deleteFromPHP(removed);
+  deleteFromFirebase(removed.id);
+}
+function reloadTable() {
+  const tableBody = document.getElementById('parcelTable').getElementsByTagName('tbody')[0];
+  tableBody.innerHTML = '';
+  parcels.forEach((p, i) => addRowToTable(p, i));
+}
+function deleteFromPHP(parcel) {
+  fetch('delete_parcel.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: parcel.id })
+  });
+}

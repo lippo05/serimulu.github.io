@@ -13,35 +13,25 @@ function saveToStorage() {
 }
 
 function addParcel() {
-  const name = document.getElementById('customerName').value.trim();
-  const id = document.getElementById('parcelID').value.trim();
+  const name = document.getElementById("customerName").value.trim();
+  const parcelID = document.getElementById("parcelID").value.trim();
 
-  if (!name || !id) {
-    alert('Please fill in all fields.');
-    return;
-  }
+  if (!name || !parcelID) return alert("Please fill in all fields");
 
-  const newParcel = { name, id, status: 'Pending' };
-  parcels.push(newParcel);
-  fetch('save_parcel.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(newParcel)
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (!data.success) {
-      console.error('Server error:', data.message);
-    }
-  });
-  
+  const newParcel = { name, id: parcelID, status: "Waiting" };
+
+  // Add new at the beginning
+  parcels.unshift(newParcel);
+
   saveToStorage();
-  addRowToTable(newParcel, parcels.length - 1);
+  reloadTable();
 
-  document.getElementById('customerName').value = '';
-  document.getElementById('parcelID').value = '';
+  // Optional: Save to backend
+  saveToPHP(newParcel);
+  saveToFirebase(newParcel);
+
+  // Reset form
+  document.getElementById("parcelForm").reset();
 }
 
 function addRowToTable(parcel, index) {
@@ -79,8 +69,11 @@ function markTaken(index, btn) {
 }
 function downloadCSV() {
     const headers = ['Customer Name', 'Parcel ID', 'Status'];
+    const newParcel = { name, id: parcelID, status: "Waiting", time: Date.now() };
     const rows = parcels.map(p => [p.name, p.id, p.status]);
-  
+    parcels.sort((a, b) => b.time - a.time);
+
+
     let csvContent = "data:text/csv;charset=utf-8," 
       + headers.join(",") + "\n"
       + rows.map(e => e.join(",")).join("\n");
@@ -110,6 +103,7 @@ function reloadTable() {
   tableBody.innerHTML = '';
   parcels.forEach((p, i) => addRowToTable(p, i));
 }
+
 function deleteFromPHP(parcel) {
   fetch('delete_parcel.php', {
     method: 'POST',

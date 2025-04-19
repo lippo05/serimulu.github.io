@@ -157,15 +157,18 @@ function updateParcelInPHP(parcel) {
   });
 }
 function applyFilter() {
-  const filter = document.getElementById("statusFilter").value;
+  const filterStatus = document.getElementById("statusFilter").value.toLowerCase();
+  const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+
   const tableBody = document.getElementById('parcelTable').getElementsByTagName('tbody')[0];
   tableBody.innerHTML = '';
 
-  let filteredParcels = parcels;
-
-  if (filter !== "all") {
-    filteredParcels = parcels.filter(p => p.status === filter);
-  }
+  let filteredParcels = parcels.filter(p => {
+    const matchStatus = filterStatus === "all" || p.status.toLowerCase() === filterStatus;
+    const matchSearch = p.name.toLowerCase().includes(searchQuery) || p.id.toLowerCase().includes(searchQuery);
+    return matchStatus && matchSearch;
+  });
 
   filteredParcels.forEach((p, i) => addRowToTable(p, i));
 }
+

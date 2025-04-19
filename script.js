@@ -48,11 +48,12 @@ function addRowToTable(parcel, index) {
   const table = document.getElementById('parcelTable').getElementsByTagName('tbody')[0];
   const newRow = table.insertRow();
 
-  newRow.insertCell(0).textContent = parcel.name;
-  newRow.insertCell(1).textContent = parcel.id;
-  newRow.insertCell(2).textContent = parcel.status;
+  newRow.insertCell(0).textContent = index + 1; // Numbering
+  newRow.insertCell(1).textContent = parcel.name;
+  newRow.insertCell(2).textContent = parcel.id;
+  newRow.insertCell(3).textContent = parcel.status;
 
-  const actionCell = newRow.insertCell(3);
+  const actionCell = newRow.insertCell(4);
   actionCell.innerHTML = `
     ${parcel.status === 'Taken' ? '' : `<button onclick="markTaken(${index}, this)">Mark as Taken</button>`}
     <button onclick="editParcel(${index})">Edit</button>
@@ -63,6 +64,7 @@ function addRowToTable(parcel, index) {
     newRow.classList.add('taken');
   }
 }
+
 
 
 

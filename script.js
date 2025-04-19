@@ -32,6 +32,10 @@ function addParcel() {
 
   // Reset form
   document.getElementById("parcelForm").reset();
+  reloadTable();
+  applyFilter();
+
+
 }
 
 function addRowToTable(parcel, index) {
@@ -66,6 +70,10 @@ function markTaken(index, btn) {
   row.cells[2].textContent = 'Taken';
   row.classList.add('taken');
   btn.remove();
+  reloadTable();
+  applyFilter();
+
+
 }
 function downloadCSV() {
     const headers = ['Customer Name', 'Parcel ID', 'Status'];
@@ -97,6 +105,10 @@ function deleteParcel(index) {
   // 🔄 Optional: Delete from backend
   deleteFromPHP(removed);
   deleteFromFirebase(removed.id);
+  reloadTable();
+  applyFilter();
+
+
 }
 function reloadTable() {
   const tableBody = document.getElementById('parcelTable').getElementsByTagName('tbody')[0];
@@ -143,4 +155,17 @@ function updateParcelInPHP(parcel) {
   }).then(res => res.json()).then(data => {
     if (!data.success) console.error("PHP update failed:", data.message);
   });
+}
+function applyFilter() {
+  const filter = document.getElementById("statusFilter").value;
+  const tableBody = document.getElementById('parcelTable').getElementsByTagName('tbody')[0];
+  tableBody.innerHTML = '';
+
+  let filteredParcels = parcels;
+
+  if (filter !== "all") {
+    filteredParcels = parcels.filter(p => p.status === filter);
+  }
+
+  filteredParcels.forEach((p, i) => addRowToTable(p, i));
 }

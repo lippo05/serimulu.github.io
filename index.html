@@ -27,6 +27,13 @@
 </thead>
     <tbody></tbody>
   </table>
+  <label for="statusFilter">Filter by status:</label>
+<select id="statusFilter" onchange="applyFilter()">
+  <option value="all">All</option>
+  <option value="Waiting">Waiting</option>
+  <option value="Taken">Taken</option>
+</select>
+
   <button onclick="downloadCSV()">Download CSV Report</button>
 
 

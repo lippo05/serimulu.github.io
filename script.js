@@ -55,6 +55,7 @@ function addRowToTable(parcel, index) {
   const actionCell = newRow.insertCell(3);
   actionCell.innerHTML = `
     ${parcel.status === 'Taken' ? '' : `<button onclick="markTaken(${index}, this)">Mark as Taken</button>`}
+    <button onclick="editParcel(${index})">Edit</button>
     <button onclick="deleteParcel(${index})">Delete</button>
   `;
 
@@ -62,6 +63,7 @@ function addRowToTable(parcel, index) {
     newRow.classList.add('taken');
   }
 }
+
 
 
 function markTaken(index, btn) {
@@ -111,5 +113,38 @@ function deleteFromPHP(parcel) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: parcel.id })
+  });
+}
+function editParcel(index) {
+  const parcel = parcels[index];
+
+  const newName = prompt("Edit customer name:", parcel.name);
+  if (newName === null) return; // cancelled
+
+  const newID = prompt("Edit parcel ID:", parcel.id);
+  if (newID === null) return; // cancelled
+
+  parcel.name = newName.trim();
+  parcel.id = newID.trim();
+
+  parcels[index] = parcel;
+  saveToStorage();
+  reloadTable();
+
+  // Optional: update in backend
+  updateParcelInPHP(parcel);
+  updateParcelInFirebase(parcel);
+}
+function updateParcelInPHP(parcel) {
+  fetch('update_parcel.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      originalID: parcel.id,  // or store originalID before editing
+      name: parcel.name,
+      id: parcel.id
+    })
+  }).then(res => res.json()).then(data => {
+    if (!data.success) console.error("PHP update failed:", data.message);
   });
 }

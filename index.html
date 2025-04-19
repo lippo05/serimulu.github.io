@@ -27,6 +27,8 @@
 </thead>
     <tbody></tbody>
   </table>
+  <label for="searchInput">Search:</label>
+<input type="text" id="searchInput" placeholder="Search by name or ID" oninput="applyFilter()" />
   <label for="statusFilter">Filter by status:</label>
 <select id="statusFilter" onchange="applyFilter()">
   <option value="all">All</option>

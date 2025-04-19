@@ -1,0 +1,23 @@
+<?php
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "parcel_tracking";
+
+$conn = new mysqli($host, $user, $pass, $db);
+
+if ($conn->connect_error) {
+  die(json_encode(['success' => false, 'message' => 'Connection failed']));
+}
+
+$data = json_decode(file_get_contents('php://input'), true);
+$parcelID = $conn->real_escape_string($data['id']);
+
+$sql = "DELETE FROM parcels WHERE parcel_id = '$parcelID'";
+if ($conn->query($sql) === TRUE) {
+  echo json_encode(['success' => true]);
+} else {
+  echo json_encode(['success' => false, 'message' => $conn->error]);
+}
+$conn->close();
+?>
